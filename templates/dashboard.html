@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Network Status</title>
+  <style>table, th, td { border: 1px solid black; padding: 10px; }</style>
+</head>
+<body>
+  <h2>Network Device Status</h2>
+  <table>
+    <tr><th>Name</th><th>IP</th><th>Status</th><th>Uptime</th></tr>
+    {% for d in statuses %}
+    <tr>
+      <td>{{ d.name }}</td>
+      <td>{{ d.ip }}</td>
+      <td>{{ 'UP' if d.reachable else 'DOWN' }}</td>
+      <td>{{ d.uptime or 'N/A' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
