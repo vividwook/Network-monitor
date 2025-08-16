@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <title>Network Status</title>
+  <style>
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #555; padding: 8px 10px; }
+    th { background: #f5f5f5; }
+    .up { color: #0a0; font-weight: 600; }
+    .down { color: #c00; font-weight: 600; }
+    small { color: #444; }
+  </style>
+</head>
+<body>
+  <h2>Network Device Status</h2>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>IP</th>
+      <th>Status</th>
+      <th>Uptime</th>
+      <th>CPU</th>
+      <th>Disk</th>
+      <th>Interfaces (Up)</th>
+      <th>Checked</th>
+    </tr>
+
+    {% for d in statuses %}
+    <tr>
+      <td>{{ d.name }}</td>
+      <td>{{ d.ip }}</td>
+
+      <td>
+        {% if d.reachable %}
+          <span class="up">UP</span>
+        {% else %}
+          <span class="down">DOWN</span>
+        {% endif %}
+      </td>
+
+      <td>{{ d.uptime_fmt or 'N/A' }}</td>
+
+      <!-- CPU -->
+      <td>
+        {% if d.cpu_pct is not none %}
+          {{ d.cpu_pct }}%
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+
+      <!-- Disk -->
+      <td>
+        {% if d.disks and d.disks|length > 0 %}
+          <small>
+            {% for disk in d.disks %}
+              {{ disk.name }}: {{ disk.used_pct }}%
+              ({{ disk.used_human }} / {{ disk.total_human }})
+              {% if not loop.last %}<br/>{% endif %}
+            {% endfor %}
+          </small>
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+
+      <!-- Interfaces -->
+      <td>
+        {% if d.if_up and d.if_up|length > 0 %}
+          <small>
+            {% for ifn in d.if_up %}
+              {{ ifn }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </small>
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+
+      <td>{{ d.checked_at }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
